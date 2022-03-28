@@ -1,0 +1,65 @@
+import { component, useState } from 'haunted';
+import { html } from 'lit-html';
+import './../styles/main.css';
+
+const TodoList = (host) => {
+  const [todos, setTodos] = useState([]);
+  // const [list, setList] = useState(() => {});
+  return html`
+    <style>
+      input {
+        margin: 0;
+        border: none;
+        border-radius: 0;
+        border-bottom: 2px solid #bcbcbc;
+        width: 50%;
+        padding: 10px;
+        float: left;
+        font-size: 16px;
+        background: #ccc;
+        outline: none;
+      }
+
+      .addBtn {
+        padding: 10px;
+        width: 50%;
+        background: #d9d9d9;
+        color: #555;
+        float: left;
+        text-align: center;
+        font-size: 16px;
+        cursor: pointer;
+        transition: 0.3s;
+        border-radius: 0;
+      }
+
+      .addBtn:hover {
+        background-color: #bbb;
+      }
+
+      .list {
+        padding: 0 10px;
+        width: 50%;
+        background: #8c9e5e;
+        font-size: 16px;
+      }
+    </style>
+
+    <h3>To Do List</h3>
+    <input type="text" id="newTodo" placeholder="Todo..." value=${''} />
+    <span
+      class="addBtn"
+      @click=${() => {
+        const input = host.shadowRoot.querySelector('#newTodo');
+        const list = host.shadowRoot.querySelector('.list');
+        setTodos(todos.concat(input.value));
+        // setList();
+      }}
+    >
+      Add
+    </span>
+    <p class="list">${todos}</p>
+  `;
+};
+
+customElements.define('todo-list', component(TodoList));
