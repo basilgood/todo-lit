@@ -3,26 +3,28 @@ import { html } from 'lit-html';
 import '../styles/main.css';
 
 const TodoList = (host) => {
-  const [todos, setTodos] = useState([]);
-  const [done, setDone] = useState('');
-  const todoItem = {
-    text: '',
-    done: false,
-    active: false,
-    total: 0,
-  };
+  const [todos, setTodos] = useState([
+    { text: 'item 1', done: false },
+    { text: 'item 2', done: true },
+    { text: 'item 3', done: true },
+  ]);
+
   const list = todos.map(
     (todo, index) =>
-      html` <input
+      html`<input
           type="checkbox"
           id="done"
-          @change=${() => {
-            const checkbox = host.shadowRoot.querySelector('#done');
-            setDone(() => (checkbox.checked ? 'done' : ''));
+          ?checked=${todo.done}
+          @change=${(event) => {
+            setTodos((todos) =>
+              todos.map((todo, i) =>
+                i === index ? { ...todo, done: event.target.checked } : todo
+              )
+            );
           }}
         />
-        <li class=${done + ' todo-item'}>
-          ${todo}
+        <li class=${(todo.done ? 'done' : '') + ' todo-item'}>
+          ${todo.text}
           <button
             @click=${() => {
               setTodos(todos.slice(0, index).concat(todos.slice(index + 1)));
@@ -81,14 +83,13 @@ const TodoList = (host) => {
         type="text"
         placeholder="Add a todo"
         class="todo-input"
-        value=${todos}
         autofocus
       />
       <button
         class="todo-button"
         @click=${() => {
           const input = host.shadowRoot.querySelector('.todo-input');
-          setTodos([input.value].concat(todos));
+          setTodos([{ text: input.value, done: false }].concat(todos));
         }}
       >
         Add todo
@@ -98,8 +99,8 @@ const TodoList = (host) => {
       </ul>
       <div class="todo-bar">
         <ul class="todo-filter">
-          <li>items</li>
-          <li>Active</li>
+          <li>${todos.length} items</li>
+          <li>Active ${todos.filter((todo) => !todo.done).length}</li>
           <li>Completed</li>
         </ul>
       </div>
