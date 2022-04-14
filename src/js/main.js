@@ -3,13 +3,10 @@ import { html } from 'lit-html';
 import '../styles/main.css';
 
 const TodoList = (host) => {
-  const [todos, setTodos] = useState([
-    { text: 'item 1', done: false },
-    { text: 'item 2', done: true },
-    { text: 'item 3', done: true },
-  ]);
+  const [todos, setTodos] = useState([]),
+    [filter, setFilter] = useState(() => () => true);
 
-  const list = todos.map(
+  const list = todos.filter(filter).map(
     (todo, index) =>
       html`<input
           type="checkbox"
@@ -37,6 +34,9 @@ const TodoList = (host) => {
   useEffect(() => {
     console.log(todos);
   }, [todos]);
+  useEffect(() => {
+    console.log(filter);
+  }, [filter]);
   return html`
     <style>
       .todo {
@@ -61,6 +61,15 @@ const TodoList = (host) => {
       }
       .todo-filter li {
         display: inline;
+      }
+      .todo-filter li a {
+        color: inherit;
+        margin: 3px;
+        padding: 3px 7px;
+        text-decoration: none;
+        border: 1px solid transparent;
+        border-radius: 3px;
+        border-color: rgba(175, 47, 47, 0.2);
       }
       .todo-bar {
         color: #777;
@@ -98,11 +107,13 @@ const TodoList = (host) => {
         ${list}
       </ul>
       <div class="todo-bar">
-        <ul class="todo-filter">
-          <li>${todos.length} items</li>
-          <li>Active ${todos.filter((todo) => !todo.done).length}</li>
-          <li>Completed</li>
-        </ul>
+        <button @click=${() => setFilter(() => () => true)}>All</button>
+        <button @click=${() => setFilter(() => (todo) => todo.done === false)}>
+          Active
+        </button>
+        <button @click=${() => setFilter(() => (todo) => todo.done === true)}>
+          Completed
+        </button>
       </div>
     </div>
   `;
